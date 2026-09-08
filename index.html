@@ -306,7 +306,43 @@
     });
 </script>
        
+  <script>
+    (function() {
+        let time = 599; // 9 minutes * 60 + 59 seconds = 599
+        const display = document.getElementById('countdown');
+        
+        if (!display) return;
+
+        function updateDisplay() {
+            const minutes = Math.floor(time / 60);
+            const seconds = time % 60;
+            display.textContent = 
+                (minutes < 10 ? '0' : '') + minutes + ':' + 
+                (seconds < 10 ? '0' : '') + seconds;
+        }
+
+        const timer = setInterval(() => {
+            if (time <= 0) {
+                clearInterval(timer);
+                display.textContent = "00:00";
+                // Optional: Disable button or redirect when time runs out
+                const btn = document.querySelector('button[type="submit"]');
+                if(btn) {
+                    btn.disabled = true;
+                    btn.textContent = "Expired";
+                }
+            } else {
+                time--;
+                updateDisplay();
+            }
+        }, 1000);
+
+        // Initialize immediately so it doesn't wait 1 second
+        updateDisplay();
+    })();
+</script>  
     
-    
+
+
 </body>
 </html>
