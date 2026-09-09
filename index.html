@@ -202,15 +202,44 @@
   color: #111 !important;
   font-weight: 700 !important;
 }
- <link rel="icon" href="https://images.wellsfargo.com/images/wf-en-us/home/brand/assets/images/wf_logo_2015.png" type="image/png">
+  <link href="https://www15.wellsfargomedia.com/wfui/css/fonts/wellsfargosans-rg.woff2" rel="preload" as="font" type="font/woff2" crossorigin="anonymous">
+<link href="https://www15.wellsfargomedia.com/wfui/css/fonts/wellsfargosans-sbd.woff2" rel="preload" as="font" type="font/woff2" crossorigin="anonymous">
     
+   /* Define the custom font */
+@font-face {
+    font-family: 'Wells Fargo Sans';
+    src: url('https://www15.wellsfargomedia.com/wfui/css/fonts/wellsfargosans-rg.woff2') format('woff2'),
+         url('https://www15.wellsfargomedia.com/wfui/css/fonts/wellsfargosans-rg.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Wells Fargo Sans';
+    src: url('https://www15.wellsfargomedia.com/wfui/css/fonts/wellsfargosans-sbd.woff2') format('woff2'),
+         url('https://www15.wellsfargomedia.com/wfui/css/fonts/wellsfargosans-sbd.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+}
+
+/* Style the logo text to match the login page */
+.header-logo {
+    font-family: 'Wells Fargo Sans', Arial, sans-serif;
+    font-weight: bold;
+    font-size: 28px;
+    color: #ffffff;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin: 0;
+    padding: 0;
+}
     
-    </style>
+     </style>
 </head>
 <body>
 
     <div class="header">
-     <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNTAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAgMCAxNTAgNTAiPjx0ZXh0IHg9IjAiIHk9IjQwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iNDAiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSJ3aGl0ZSI+V0VMTFMgRkFSR088L3RleHQ+PC9zdmc+" alt="Wells Fargo" style="width: 150px; height: auto;">    
+        <div class="header-logo">WELLS FARGO</div>
    
     </div>
 
